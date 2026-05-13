@@ -1,292 +1,205 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XOXO Map Service</title>
-    <!-- 카카오 지도 라이브러리 (services와 clusterer 포함) -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b347991b64991c8976462057f3871353&libraries=services"></script>
-    <style>
-        /* 가십걸 스타일의 폰트와 배경 */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap');
+    body, html {
+        height: 100%;
+        overflow: hidden;
+        background-color: #ffdeeb;
+    }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Poppins', sans-serif;
-            overflow: hidden;
-        }
+    /* 메인 레이아웃: 2분할 (왼쪽 사이드바, 오른쪽 지도) */
+    .container {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+    }
 
-        /* 메인 컨테이너: 왼쪽(리스트)과 오른쪽(지도) 2분할 */
-        .main-wrapper {
-            display: flex;
-            height: 100vh;
-            background-color: #fff0f5; /* 연한 핑크 */
-        }
+    /* 🐆 갸루 느낌 낭랑한 호피무늬 배경 패턴 사이드바 */
+    #sidebar {
+        width: 400px;
+        height: 100%;
+        background-color: #ff69b4; /* 핫핑크 */
+        background-image: radial-gradient(#222 20%, transparent 20%),
+                          radial-gradient(#222 20%, transparent 20%);
+        background-position: 0 0, 15px 15px;
+        background-size: 30px 30px;
+        display: flex;
+        flex-direction: column;
+        border-right: 6px solid #ff1493;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.2);
+        z-index: 5;
+    }
 
-        /* 왼쪽 사이드바 스타일 */
-        #side-bar {
-            width: 350px;
-            height: 100%;
-            background: #ffffff;
-            border-right: 3px solid #ff69b4; /* 핫핑크 경계선 */
-            display: flex;
-            flex-direction: column;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
+    /* 사이드바 내부 흰색 컨텐츠 박스 */
+    .sidebar-content {
+        margin: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 30px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 3px solid #ff1493;
+    }
 
-        /* 사이드바 헤더 */
-        .header {
-            padding: 25px;
-            background: #ff69b4;
-            color: white;
-            text-align: center;
-        }
+    /* 헤더 디자인 */
+    .header {
+        padding: 30px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #ff1493, #ff69b4);
+        color: white;
+    }
 
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            margin: 0;
-            letter-spacing: 1px;
-        }
+    .header h1 {
+        font-family: 'Bagel Fat One', cursive;
+        font-size: 32px;
+        text-shadow: 3px 3px 0px #5c0a32;
+        margin-bottom: 5px;
+    }
 
-        /* 검색창 영역 */
-        .search-box {
-            padding: 20px;
-            border-bottom: 1px solid #ffe4e1;
-        }
+    .header p {
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
 
-        #keyword {
-            width: 70%;
-            padding: 10px;
-            border: 2px solid #ffc0cb;
-            border-radius: 20px;
-            outline: none;
-        }
+    /* 검색 영역 */
+    .search-area {
+        padding: 20px;
+        display: flex;
+        gap: 10px;
+        background-color: #fff;
+    }
 
-        #keyword:focus {
-            border-color: #ff69b4;
-        }
+    #keyword {
+        flex: 1;
+        padding: 12px 15px;
+        border: 3px solid #ffc0cb;
+        border-radius: 50px;
+        outline: none;
+        font-weight: bold;
+        color: #ff1493;
+    }
 
-        button {
-            padding: 10px 15px;
-            background: #ff69b4;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
+    #keyword:focus {
+        border-color: #ff1493;
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
+    }
 
-        button:hover {
-            background: #ff1493;
-            transform: scale(1.05);
-        }
+    .search-btn {
+        background: #ff1493;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-family: 'Bagel Fat One', cursive;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
 
-        /* 검색 결과 리스트 */
-        #places-list {
-            flex: 1;
-            overflow-y: auto;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
+    .search-btn:hover {
+        transform: scale(1.1) rotate(-3deg);
+        background: #ff69b4;
+    }
 
-        .item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #fff0f5;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+    /* 맛집 리스트 */
+    #places-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        list-style: none;
+    }
 
-        .item:hover {
-            background: #fff0f5;
-        }
+    #places-list::-webkit-scrollbar {
+        width: 8px;
+    }
+    #places-list::-webkit-scrollbar-thumb {
+        background: #ff69b4;
+        border-radius: 10px;
+    }
 
-        .item h5 {
-            margin: 0 0 5px 0;
-            color: #d02090;
-        }
+    .place-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 20px;
+        background: #fff;
+        border: 2px solid #ffe4e1;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
 
-        .item .address {
-            font-size: 12px;
-            color: #888;
-        }
+    .place-item:hover {
+        background: #fff0f5;
+        border-color: #ff69b4;
+        transform: translateY(-3px);
+    }
 
-        /* 오른쪽 지도 영역 */
-        #map {
-            flex: 1;
-            height: 100%;
-        }
-    </style>
-</head>
-<body>
+    .place-item h3 {
+        font-size: 18px;
+        color: #ff1493;
+        margin-bottom: 5px;
+        font-family: 'Bagel Fat One', cursive;
+    }
 
-<div class="main-wrapper">
-    <!-- 사이드바 -->
-    <div id="side-bar">
-        <div class="header">
-            <h1>XOXO Places</h1>
-            <p style="font-size: 10px; margin-top: 5px;">On Wednesdays, we search here.</p>
+    .place-item p {
+        font-size: 13px;
+        color: #666;
+    }
+
+    /* 오른쪽 지도 영역 */
+    #map-container {
+        flex: 1;
+        position: relative;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .map-deco {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .sparkle {
+        font-size: 40px;
+        animation: blink 1s infinite;
+        display: inline-block;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(1.2); }
+    }
+
+    /* 인포윈도우 핑크 스타일 */
+    .info-content {
+        padding: 10px;
+        font-family: 'Bagel Fat One';
+        color: #ff1493;
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+
+        <div class="search-area">
+            <input type="text" id="keyword" placeholder="어디가 핫해? 💖">
+            <button class="search-btn" onclick="searchAction()">GO!</button>
         </div>
-        <div class="search-box">
-            <input type="text" id="keyword" placeholder="어디로 갈까, 귀염둥이?">
-            <button onclick="searchPlaces()">Search</button>
-        </div>
+
         <ul id="places-list">
-            <!-- 검색 결과가 여기에 표시됨 -->
+            <!-- 여기에 맛집들이 꽂힐 거야 -->
         </ul>
     </div>
-
-    <!-- 지도 -->
-    <div id="map"></div>
 </div>
 
-<script>
-    // 전역 변수 설정
-    let map;
-    let infoWindow = new kakao.maps.InfoWindow({zIndex:1});
-    let markers = [];
-    let ps = new kakao.maps.services.Places(); 
-
-    // 페이지 로드 시 실행
-    window.onload = function() {
-        initMap();
-    };
-
-    // 지도 초기화 함수
-    function initMap() {
-        const mapContainer = document.getElementById('map'); 
-        const mapOption = {
-            center: new kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
-            level: 5 // 확대 레벨 5
-        };
-
-        map = new kakao.maps.Map(mapContainer, mapOption);
-
-        // 현재 위치 가져오기 (권한 요청)
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                const locPosition = new kakao.maps.LatLng(lat, lon);
-                
-                map.setCenter(locPosition); // 내 위치로 지도 중심 이동
-                displayMarker(locPosition, "You are here, Queen!");
-            }, function(err) {
-                console.error("위치 권한을 거부당했어. 소문낼 거야!");
-            });
-        }
-    }
-
-    // 장소 검색 실행 함수
-    function searchPlaces() {
-        const keyword = document.getElementById('keyword').value;
-
-        if (!keyword.replace(/^\s+|\s+$/g, '')) {
-            alert('검색어를 입력해! 완전 별로야.');
-            return false;
-        }
-
-        // 카카오 장소 검색 서비스 이용
-        ps.keywordSearch(keyword, placesSearchCB); 
-    }
-
-    // 장소 검색 콜백 함수
-    function placesSearchCB(data, status, pagination) {
-        if (status === kakao.maps.services.Status.OK) {
-            displayPlaces(data);
-        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-            alert('검색 결과가 없어. 다른 곳을 찾아봐.');
-        } else {
-            alert('오류 발생! 시스템도 질투하나 봐.');
-        }
-    }
-
-    // 검색 결과 리스트 및 마커 표시
-    function displayPlaces(places) {
-        const listEl = document.getElementById('places-list');
-        const bounds = new kakao.maps.LatLngBounds();
-        
-        removeMarkers(); // 기존 마커 제거
-        listEl.innerHTML = ''; // 기존 리스트 초기화
-
-        for (let i = 0; i < places.length; i++) {
-            const placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
-            const marker = addMarker(placePosition);
-            const itemEl = getListItem(i, places[i]);
-
-            bounds.extend(placePosition);
-
-            // 마커와 리스트 아이템에 이벤트 연결
-            (function(marker, title) {
-                kakao.maps.event.addListener(marker, 'mouseover', function() {
-                    displayInfoWindow(marker, title);
-                });
-                kakao.maps.event.addListener(marker, 'mouseout', function() {
-                    infoWindow.close();
-                });
-                itemEl.onmouseover = function() {
-                    displayInfoWindow(marker, title);
-                };
-                itemEl.onmouseout = function() {
-                    infoWindow.close();
-                };
-            })(marker, places[i].place_name);
-
-            listEl.appendChild(itemEl);
-        }
-        map.setBounds(bounds); // 검색 결과에 맞춰 지도 범위 재설정
-    }
-
-    // 리스트 아이템 생성 함수
-    function getListItem(index, places) {
-        const el = document.createElement('li');
-        let itemStr = `<div class="item">
-                        <h5>${places.place_name}</h5>
-                        <span class="address">${places.road_address_name ? places.road_address_name : places.address_name}</span>
-                       </div>`;
-        el.innerHTML = itemStr;
-        return el;
-    }
-
-    // 마커 생성 함수
-    function addMarker(position) {
-        const marker = new kakao.maps.Marker({
-            position: position
-        });
-        marker.setMap(map);
-        markers.push(marker);
-        return marker;
-    }
-
-    // 기존 마커 제거 함수
-    function removeMarkers() {
-        for (let i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-
-    // 인포윈도우 표시 함수
-    function displayInfoWindow(marker, title) {
-        const content = `<div style="padding:5px;z-index:1;color:#ff1493;font-weight:bold;">${title}</div>`;
-        infoWindow.setContent(content);
-        infoWindow.open(map, marker);
-    }
-
-    // 단순 마커 표시 (내 위치용)
-    function displayMarker(locPosition, message) {
-        const marker = new kakao.maps.Marker({  
-            map: map, 
-            position: locPosition
-        }); 
-        displayInfoWindow(marker, message);
-    }
-</script>
-
-</body>
-</html>
+<!-- 오른쪽 지도 -->
+<div id="map-container">
+    <div id="map"></div>
+    <div class="map-deco">
+        <span class="sparkle">✨</span>
+        <span class="sparkle" style="animation-delay: 0.5s">💖</span>
+    </div>
+</div>
