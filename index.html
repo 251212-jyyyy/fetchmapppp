@@ -1,9 +1,9 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💖 QUEEN'S GOURMET MAP 💖</title>
+    <title>💖 QUEEN'S HOTPLACE MAP 💖</title>
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b347991b64991c8976462057f3871353&libraries=services"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,186 +11,262 @@
     <style>
         :root {
             --hot-pink: #ff1493;
-            --soft-pink: #ff69b4;
-            --leopard-bg: #ffdeeb;
+            --barbie-pink: #ff69b4;
+            --leopard-dark: #222;
+            --glass-bg: rgba(255, 255, 255, 0.85);
         }
 
         body, html {
             height: 100%;
             margin: 0;
             font-family: 'Pretendard', sans-serif;
-            background-color: var(--leopard-bg);
+            background-color: #ffe4e1;
+            overflow: hidden;
         }
 
-        /* 🐆 갸루 느낌 낭랑한 호피무늬 배경 사이드바 */
+        /* 🐆 사이드바: 럭셔리 레오파드 패턴 */
         #sidebar {
-            width: 380px;
+            width: 400px;
             height: 100vh;
-            background-color: #ff69b4;
-            /* CSS 레오파드 패턴 */
-            background-image: radial-gradient(#222 20%, transparent 20%),
-                              radial-gradient(#222 20%, transparent 20%);
-            background-position: 0 0, 15px 15px;
-            background-size: 30px 30px; 
-            border-right: 5px solid var(--hot-pink);
+            background-color: var(--barbie-pink);
+            background-image: 
+                radial-gradient(var(--leopard-dark) 20%, transparent 20%),
+                radial-gradient(var(--leopard-dark) 20%, transparent 20%);
+            background-position: 0 0, 20px 20px;
+            background-size: 40px 40px; 
             display: flex;
             flex-direction: column;
-            box-shadow: 10px 0 25px rgba(0,0,0,0.3);
-            z-index: 10;
+            padding: 20px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            z-index: 20;
+            position: relative;
         }
 
-        .sidebar-content {
-            margin: 15px;
-            background: rgba(255, 255, 255, 0.92);
-            border-radius: 25px;
-            flex: 1;
+        /* 💎 사이드바 내부 컨텐츠 박스 */
+        .sidebar-inner {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 4px solid white;
+            border-radius: 30px;
+            height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 3px solid var(--hot-pink);
+            box-shadow: inset 0 0 15px rgba(255,20,147,0.2);
         }
 
+        /* 👑 헤더 부분 */
         .header {
-            padding: 30px 10px;
-            background: linear-gradient(to bottom, #ff1493, #ff69b4);
-            color: white;
+            padding: 40px 20px;
             text-align: center;
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+            color: white;
+            border-bottom: 4px solid white;
         }
 
         .header h1 {
             font-family: 'Bagel Fat One', cursive;
-            font-size: 28px;
-            text-shadow: 2px 2px 0px #000;
+            font-size: 32px;
+            text-shadow: 3px 3px 0px #000;
+            letter-spacing: -1px;
             margin-bottom: 5px;
         }
 
-        .search-area {
-            padding: 20px;
+        /* 🔍 검색창 영역: 절대 안 잘리게! */
+        .search-container {
+            padding: 25px 20px;
             background: white;
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .search-row {
+            display: flex;
             gap: 10px;
+            width: 100%;
         }
 
         #keyword {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
             border: 3px solid #ffc0cb;
-            border-radius: 15px;
-            outline: none;
-            color: var(--hot-pink);
+            border-radius: 18px;
             font-weight: bold;
+            color: var(--hot-pink);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #keyword:focus {
+            border-color: var(--hot-pink);
+            box-shadow: 0 0 10px rgba(255,20,147,0.3);
         }
 
         .btn-go {
+            width: 80px;
             background: var(--hot-pink);
             color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
+            border: 3px solid white;
+            border-radius: 18px;
             font-family: 'Bagel Fat One', cursive;
-            transition: all 0.2s;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 0 #c71585;
         }
 
         .btn-go:hover {
-            transform: scale(1.1) rotate(-3deg);
+            transform: scale(1.05) rotate(3deg);
             background: #000;
         }
 
+        .btn-go:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        /* 🍕 맛집 리스트 */
         #places-list {
             flex: 1;
             overflow-y: auto;
             padding: 15px;
+            background: #fffafa;
         }
 
         .place-card {
             background: white;
-            padding: 15px;
-            border-radius: 20px;
+            padding: 18px;
+            border-radius: 22px;
             margin-bottom: 15px;
-            border: 2px solid #fff0f5;
+            border: 2px solid #ffe4e1;
             cursor: pointer;
             transition: 0.3s;
+            position: relative;
         }
 
         .place-card:hover {
-            background: #fff0f5;
             border-color: var(--hot-pink);
-            transform: translateX(5px);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255,20,147,0.1);
         }
 
         .place-card h3 {
             font-family: 'Bagel Fat One', cursive;
             color: var(--hot-pink);
-            font-size: 18px;
+            font-size: 19px;
+            margin-bottom: 4px;
         }
 
         .place-card p {
             font-size: 13px;
-            color: #666;
-            margin-top: 5px;
+            color: #777;
         }
 
-        /* 🗺️ 지도 컨테이너 */
-        #map {
+        /* 🗺️ 오른쪽 지도 영역 스타일링 */
+        #map-container {
             flex: 1;
-            height: 100vh;
+            position: relative;
+            background: #eee;
         }
 
-        .custom-overlay {
-            background: var(--hot-pink);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-family: 'Bagel Fat One', cursive;
-            font-size: 12px;
-            position: relative;
-            bottom: 45px;
-            border: 2px solid white;
+        #map {
+            width: 100%;
+            height: 100%;
         }
+
+        /* 💅 지도 위에 뜨는 럭셔리 정보창 */
+        .map-overlay {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 3px solid var(--hot-pink);
+            font-family: 'Bagel Fat One', cursive;
+            color: var(--hot-pink);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            pointer-events: none;
+        }
+
+        /* 인포윈도우 커스텀 스타일 */
+        .custom-iw {
+            padding: 10px;
+            background: white;
+            border-radius: 15px;
+            border: 2px solid var(--hot-pink);
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        /* 스크롤바 커스텀 */
+        #places-list::-webkit-scrollbar { width: 8px; }
+        #places-list::-webkit-scrollbar-track { background: #fff; }
+        #places-list::-webkit-scrollbar-thumb { background: var(--barbie-pink); border-radius: 10px; }
     </style>
 </head>
 <body class="flex">
 
     <div id="sidebar">
-        <div class="sidebar-content">
+        <div class="sidebar-inner">
             <div class="header">
-                <h1>QUEEN'S MAP 🐆</h1>
-                <p class="text-xs italic">XOXO, Real Gourmet Only</p>
+                <h1>QUEEN'S PICK 🐆</h1>
+                <p class="text-xs uppercase tracking-widest opacity-80 font-bold">The Ultimate Gourmet Map</p>
             </div>
             
-            <div class="search-area">
-                <input type="text" id="keyword" placeholder="뭐 먹고 싶어? 💅" onkeypress="if(event.keyCode==13) searchPlaces()">
-                <button class="btn-go" onclick="searchPlaces()">GO!</button>
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="keyword" placeholder="어떤 핫플을 원해? 💅" onkeypress="if(event.keyCode==13) searchPlaces()">
+                    <button class="btn-go" onclick="searchPlaces()">GO</button>
+                </div>
+                <p class="text-[10px] text-pink-400 font-bold ml-2">#Y2K #HOT_GIRL #TRENDY</p>
             </div>
 
-            <div id="places-list">
-                <p class="text-center text-gray-400 mt-10">맛집을 검색하면 리스트가 짜잔~✨</p>
-            </div>
+            <ul id="places-list">
+                <div class="h-full flex flex-col items-center justify-center opacity-40 text-center px-10">
+                    <span class="text-5xl mb-4">🍕</span>
+                    <p class="font-bold">검색어를 입력하면<br>퀸카의 리스트가 완성돼!</p>
+                </div>
+            </ul>
         </div>
     </div>
 
-    <div id="map"></div>
+    <div id="map-container">
+        <div id="map"></div>
+        <div class="map-overlay">
+            📍 QUEEN'S STATUS: ACTIVE ✨
+        </div>
+    </div>
+
+    <!-- 메시지 박스 커스텀 -->
+    <div id="msg-box" class="fixed top-10 left-1/2 -translate-x-1/2 z-[100] bg-black text-white px-8 py-4 rounded-full font-bold shadow-2xl hidden transition-all duration-300">
+    </div>
 
     <script>
         let map;
         let markers = [];
         let ps = new kakao.maps.services.Places();
-        let infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+        let infowindow = new kakao.maps.InfoWindow({ zIndex: 10 });
 
-        // 페이지 시작하자마자 지도 띄우기
+        // 페이지 로드 시 초기화
         window.onload = function() {
             initMap();
         };
 
+        // 맵 초기화 함수
         function initMap() {
             const container = document.getElementById('map');
             const options = {
-                center: new kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치
-                level: 5 // 확대 레벨 5
+                center: new kakao.maps.LatLng(37.566826, 126.9786567),
+                level: 5
             };
 
             map = new kakao.maps.Map(container, options);
 
-            // 퀸의 현재 위치 찾기!
+            // 현재 위치 탐색
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
@@ -198,35 +274,34 @@
                     const currentPos = new kakao.maps.LatLng(lat, lon);
                     
                     map.setCenter(currentPos);
-                    displayMarker(currentPos, "📍 YOU ARE HERE");
+                    addMarker(currentPos, "YOU ARE HERE 💋");
                 }, function() {
-                    console.log("위치 권한을 허용해줘! 😭");
+                    showMsg("위치 권한을 허용해줘, 자기! 😭");
                 });
             }
         }
 
+        // 장소 검색 함수
         function searchPlaces() {
             const keyword = document.getElementById('keyword').value;
 
             if (!keyword.trim()) {
-                alert("검색어 입력 안 하면 완전 별로야.. 🎀");
+                showMsg("검색어를 입력해야지, 바보! 🎀");
                 return;
             }
 
-            // 카카오 키워드 검색 서비스 호출
-            ps.keywordSearch(keyword, placesSearchCB);
+            ps.keywordSearch(keyword, (data, status) => {
+                if (status === kakao.maps.services.Status.OK) {
+                    displayResults(data);
+                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+                    showMsg("그런 촌스러운 곳은 없어! 💅");
+                } else {
+                    showMsg("에러 났어! 완전 짜증나! 💣");
+                }
+            });
         }
 
-        function placesSearchCB(data, status) {
-            if (status === kakao.maps.services.Status.OK) {
-                displayResults(data);
-            } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-                alert("그런 맛집은 없어! 우리 급에 맞는 곳을 찾자. 💅");
-            } else {
-                alert("에러 났어! 진짜 짜증나! 💣");
-            }
-        }
-
+        // 결과 리스트 표시 함수
         function displayResults(places) {
             const listContainer = document.getElementById('places-list');
             const bounds = new kakao.maps.LatLngBounds();
@@ -234,62 +309,73 @@
             clearMarkers();
             listContainer.innerHTML = '';
 
-            for (let i = 0; i < places.length; i++) {
-                const position = new kakao.maps.LatLng(places[i].y, places[i].x);
-                const marker = addMarker(position);
-                const item = createListItem(places[i]);
+            places.forEach((place, i) => {
+                const position = new kakao.maps.LatLng(place.y, place.x);
+                const marker = addMarker(position, place.place_name);
+                const item = createListItem(place, marker);
 
                 bounds.extend(position);
-
-                // 리스트 아이템 클릭하면 해당 위치로 이동!
-                item.onclick = function() {
-                    map.panTo(position);
-                    showInfoWindow(marker, places[i].place_name);
-                };
-
                 listContainer.appendChild(item);
-            }
+            });
 
             map.setBounds(bounds);
         }
 
-        function createListItem(place) {
-            const div = document.createElement('div');
-            div.className = 'place-card';
-            div.innerHTML = `
+        // 리스트 아이템 디자인 생성
+        function createListItem(place, marker) {
+            const li = document.createElement('li');
+            li.className = 'place-card';
+            li.innerHTML = `
                 <h3>${place.place_name}</h3>
                 <p>${place.road_address_name || place.address_name}</p>
-                <div class="mt-2 text-[10px] font-bold text-pink-400">#QUEENS_PICK #HOT_PLACE</div>
+                <div class="mt-3 flex gap-2">
+                    <span class="text-[9px] bg-pink-100 text-pink-600 px-2 py-1 rounded-md font-bold">#QUEEN_APPROVED</span>
+                    <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-1 rounded-md font-bold">HOT PLACE</span>
+                </div>
             `;
-            return div;
+            
+            li.onclick = () => {
+                map.panTo(marker.getPosition());
+                openInfoWindow(marker, place.place_name);
+            };
+
+            return li;
         }
 
-        function addMarker(position) {
+        // 마커 추가 함수
+        function addMarker(position, title) {
             const marker = new kakao.maps.Marker({
                 position: position,
                 map: map
             });
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+                openInfoWindow(marker, title);
+            });
+
             markers.push(marker);
             return marker;
         }
 
-        function displayMarker(position, title) {
-            const marker = new kakao.maps.Marker({
-                position: position,
-                map: map
-            });
-            showInfoWindow(marker, title);
+        // 인포윈도우 열기
+        function openInfoWindow(marker, title) {
+            const content = `<div class="custom-iw">${title}</div>`;
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
         }
 
+        // 기존 마커 정리
         function clearMarkers() {
             markers.forEach(m => m.setMap(null));
             markers = [];
         }
 
-        function showInfoWindow(marker, title) {
-            const content = `<div style="padding:10px; font-family:'Bagel Fat One'; color:#ff1493; border-radius:10px;">${title}</div>`;
-            infowindow.setContent(content);
-            infowindow.open(map, marker);
+        // 럭셔리 알림창
+        function showMsg(text) {
+            const box = document.getElementById('msg-box');
+            box.innerText = text;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 3000);
         }
     </script>
 </body>
