@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💅 QUEEN'S HOTPLACE MAP 💅</title>
+    <!-- 카카오맵 API 연결 (https 명시) -->
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b347991b64991c8976462057f3871353&libraries=services"></script>
+    <!-- 핫걸 전용 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -14,255 +16,226 @@
             --barbie-pink: #ff69b4;
             --leopard-dark: #222;
             --glass-bg: rgba(255, 255, 255, 0.9);
-            --gold: #ffd700;
         }
 
         body, html {
             height: 100%;
             margin: 0;
             font-family: 'Pretendard', sans-serif;
-            background-color: #ffe4e1;
+            background-color: #000; /* 전체 배경은 시크한 블랙 */
             overflow: hidden;
         }
 
         #sidebar {
-            width: 420px;
+            width: 400px;
             height: 100vh;
             background-color: var(--barbie-pink);
+            /* 호피무늬 패턴 적용 */
             background-image: 
                 radial-gradient(var(--leopard-dark) 20%, transparent 20%),
                 radial-gradient(var(--leopard-dark) 20%, transparent 20%);
             background-position: 0 0, 20px 20px;
             background-size: 40px 40px; 
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.3);
             z-index: 50;
-            flex-shrink: 0;
+            box-shadow: 10px 0 30px rgba(255, 20, 147, 0.3);
         }
 
         .sidebar-inner {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 5px solid white;
+            backdrop-filter: blur(10px);
+            border: 4px solid white;
             border-radius: 40px;
             height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(255, 20, 147, 0.2);
         }
 
         .header {
-            padding: 35px 20px;
+            padding: 30px 20px;
             text-align: center;
             background: linear-gradient(135deg, var(--hot-pink), #ff00ff);
             color: white;
-            border-bottom: 5px solid white;
+            border-bottom: 4px solid white;
         }
 
         .header h1 {
             font-family: 'Bagel Fat One', cursive;
-            font-size: 36px;
-            text-shadow: 4px 4px 0px #000;
-            line-height: 1;
-            margin-bottom: 8px;
+            font-size: 32px;
+            text-shadow: 3px 3px 0px #000;
+            margin-bottom: 5px;
         }
 
         .search-container {
             padding: 20px;
             background: white;
             display: flex;
-            flex-direction: column;
             gap: 10px;
-            border-bottom: 2px solid #ffe4e1;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 8px;
-            width: 100%;
             align-items: center;
         }
 
         #keyword {
             flex: 1;
-            min-width: 0; /* flex 박스 내에서 input이 줄어들 수 있게 설정 */
-            padding: 14px 18px;
-            border: 4px solid #ffc0cb;
-            border-radius: 25px;
+            padding: 15px;
+            border: 3px solid #ffc0cb;
+            border-radius: 20px;
             font-weight: bold;
             color: var(--hot-pink);
             outline: none;
             font-size: 16px;
         }
 
+        /* 절대 안 잘리는 GO 버튼 */
         .btn-go {
-            flex-shrink: 0; /* 버튼이 절대 찌그러지지 않게 */
-            width: 75px;
-            height: 52px;
+            flex-shrink: 0; 
+            width: 80px;
+            height: 55px;
             background: var(--hot-pink);
             color: white;
             border: 3px solid white;
             border-radius: 20px;
             font-family: 'Bagel Fat One', cursive;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 5px 0 #c71585;
+            box-shadow: 0 4px 0 #c71585;
             transition: all 0.1s;
         }
 
         .btn-go:active {
             transform: translateY(3px);
-            box-shadow: 0 2px 0 #c71585;
+            box-shadow: 0 1px 0 #c71585;
         }
 
         #places-list {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: #fffafa;
+            padding: 15px;
         }
 
         .place-card {
-            background: white;
-            padding: 20px;
+            background: #fff0f5;
+            padding: 15px;
             border-radius: 25px;
-            margin-bottom: 15px;
-            border: 3px solid #ffe4e1;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 12px;
+            border: 2px solid transparent;
+            transition: 0.3s;
             cursor: pointer;
         }
 
         .place-card:hover {
-            transform: scale(1.02) rotate(-1deg);
             border-color: var(--hot-pink);
-            box-shadow: 0 10px 20px rgba(255,20,147,0.15);
+            transform: scale(1.02);
+            background: white;
         }
 
         .place-card h3 {
             font-family: 'Bagel Fat One', cursive;
             color: var(--hot-pink);
-            font-size: 20px;
+            font-size: 18px;
+            margin-bottom: 5px;
         }
 
-        #map-container {
+        #map-area {
             flex: 1;
+            padding: 30px;
+            background: #1a1a1a;
             position: relative;
-            background: #000;
-            padding: 10px; /* 지도를 감싸는 럭셔리 프레임 효과 */
         }
 
         #map {
             width: 100%;
             height: 100%;
-            border-radius: 30px; /* 지도도 둥글게! */
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            border-radius: 50px;
+            border: 8px solid var(--hot-pink);
+            box-shadow: 0 0 50px rgba(255, 20, 147, 0.4);
         }
 
-        .map-overlay-header {
+        /* 지도 위 오버레이 */
+        .map-badge {
             position: absolute;
-            top: 30px;
-            right: 30px;
-            z-index: 100;
+            top: 60px;
+            right: 60px;
+            z-index: 10;
             background: white;
-            padding: 15px 30px;
+            padding: 10px 25px;
             border-radius: 50px;
-            border: 4px solid var(--hot-pink);
+            border: 3px solid var(--hot-pink);
+            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .status-dot {
-            width: 12px;
-            height: 12px;
+        .pulse {
+            width: 10px;
+            height: 10px;
             background: #00ff00;
             border-radius: 50%;
-            box-shadow: 0 0 10px #00ff00;
-            animation: pulse 1.5s infinite;
+            animation: blink 1s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
 
+        /* 인포윈도우 스타일 */
         .custom-iw {
-            padding: 10px 15px;
+            padding: 10px;
             background: white;
-            border-radius: 20px;
-            border: 3px solid var(--hot-pink);
-            font-family: 'Bagel Fat One', cursive;
             color: var(--hot-pink);
+            font-family: 'Bagel Fat One', cursive;
+            border-radius: 10px;
             text-align: center;
-            font-size: 14px;
         }
-
-        /* 스크롤바까지 핑크로! */
-        #places-list::-webkit-scrollbar { width: 10px; }
-        #places-list::-webkit-scrollbar-thumb { background: var(--hot-pink); border-radius: 10px; border: 3px solid #fffafa; }
     </style>
 </head>
 <body class="flex">
 
+    <!-- 사이드바 -->
     <div id="sidebar">
         <div class="sidebar-inner">
             <div class="header">
                 <h1>QUEEN'S PICK 🐆</h1>
-                <p class="text-[11px] font-bold tracking-[0.2em] opacity-90">ONLY THE HOTTEST PLACES FOR YOU</p>
+                <p class="text-[10px] tracking-[0.2em]">XOXO GOSSIP MAP</p>
             </div>
             
             <div class="search-container">
-                <div class="search-row">
-                    <input type="text" id="keyword" placeholder="어디가 핫해? 💅" onkeypress="if(event.keyCode==13) searchPlaces()">
-                    <button class="btn-go" onclick="searchPlaces()">GO</button>
-                </div>
-                <div class="flex justify-between items-center px-2 mt-1">
-                    <span class="text-[10px] text-pink-500 font-extrabold uppercase">#Trends #JeeHeeStyle</span>
-                    <span class="text-[10px] text-gray-400 font-bold">XOXO Map</span>
-                </div>
+                <input type="text" id="keyword" placeholder="어디가 핫해? 💅" onkeypress="if(event.keyCode==13) searchPlaces()">
+                <button class="btn-go" onclick="searchPlaces()">GO</button>
             </div>
 
             <ul id="places-list">
-                <div class="h-full flex flex-col items-center justify-center opacity-30 text-center px-10">
-                    <span class="text-6xl mb-6">🥂</span>
-                    <p class="font-bold text-lg leading-tight">자기야, 검색어를 입력하면<br>내가 제일 핫한 곳만 골라줄게!</p>
+                <!-- 결과가 여기에 뾰로롱 -->
+                <div class="text-center mt-10 opacity-40">
+                    <p class="text-4xl mb-4">🥂</p>
+                    <p class="font-bold">언니, 검색해서 핫플 찾아봐!</p>
                 </div>
             </ul>
         </div>
     </div>
 
-    <div id="map-container">
+    <!-- 지도 영역 -->
+    <div id="map-area">
         <div id="map"></div>
-        
-        <!-- 지도 위 플로팅 장식 -->
-        <div class="map-overlay-header">
-            <div class="status-dot"></div>
-            <span class="font-bold text-gray-800 text-sm tracking-tighter">QUEEN'S RADAR: <span class="text-pink-500">SCANNING...</span></span>
+        <div class="map-badge">
+            <div class="pulse"></div>
+            <span class="text-pink-600">QUEEN IS SEARCHING...</span>
         </div>
-
-        <div class="absolute bottom-10 right-10 z-[100] bg-black/80 text-white p-4 rounded-3xl border-2 border-pink-500 backdrop-blur-sm text-xs font-bold">
-            📍 Current Zoom: Level 5
-        </div>
-    </div>
-
-    <div id="msg-box" class="fixed top-12 left-1/2 -translate-x-1/2 z-[200] bg-hot-pink bg-[#ff1493] text-white px-10 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(255,20,147,0.5)] hidden transition-all duration-300 border-2 border-white">
     </div>
 
     <script>
         let map;
         let markers = [];
-        let placeSearch = new kakao.maps.services.Places();
-        let infoWindow = new kakao.maps.InfoWindow({ zIndex: 10 });
+        let ps = new kakao.maps.services.Places();
+        let infowindow = new kakao.maps.InfoWindow({zIndex:1});
 
         window.onload = function() {
             initMap();
         };
 
+        // 지도 초기화
         function initMap() {
             const container = document.getElementById('map');
             const options = {
@@ -272,17 +245,17 @@
 
             map = new kakao.maps.Map(container, options);
 
+            // 현재 위치 가져오기
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    const currentPos = new kakao.maps.LatLng(lat, lon);
+                    const locPosition = new kakao.maps.LatLng(lat, lon);
                     
-                    map.setCenter(currentPos);
-                    createMarker(currentPos, "YOU ARE HERE ✨");
-                    showMsg("자기를 찾았어! 완전 반가워 💋");
+                    map.setCenter(locPosition);
+                    createMarker(locPosition, "YOU ARE HERE 👑");
                 }, function() {
-                    showMsg("위치 권한 좀 빌려줘, 자기! 😭");
+                    console.log("위치 권한 거부당함! ㅠㅠ");
                 });
             }
         }
@@ -291,55 +264,46 @@
             const keyword = document.getElementById('keyword').value;
 
             if (!keyword.trim()) {
-                showMsg("검색어를 입력해야 핫플을 찾지! 🎀");
                 return;
             }
 
-            placeSearch.keywordSearch(keyword, (data, status) => {
+            ps.keywordSearch(keyword, (data, status) => {
                 if (status === kakao.maps.services.Status.OK) {
-                    renderResults(data);
-                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-                    showMsg("어머, 그런 촌스러운 곳은 안 나와! 💅");
+                    displayResults(data);
                 } else {
-                    showMsg("에러 났어! 완전 짜증나! 💣");
+                    alert("언니, 거기 안 핫한가 봐... 결과가 없어! 😭");
                 }
             });
         }
 
-        function renderResults(places) {
-            const listContainer = document.getElementById('places-list');
+        function displayResults(places) {
+            const listEl = document.getElementById('places-list');
             const bounds = new kakao.maps.LatLngBounds();
 
             clearMarkers();
-            listContainer.innerHTML = '';
+            listEl.innerHTML = '';
 
-            places.forEach((place) => {
+            places.forEach((place, i) => {
                 const position = new kakao.maps.LatLng(place.y, place.x);
                 const marker = createMarker(position, place.place_name);
-                const item = createPlaceItem(place, marker);
+                const item = createListItem(place, marker);
 
                 bounds.extend(position);
-                listContainer.appendChild(item);
+                listEl.appendChild(item);
             });
 
             map.setBounds(bounds);
         }
 
-        function createPlaceItem(place, marker) {
+        function createListItem(place, marker) {
             const li = document.createElement('li');
             li.className = 'place-card';
             li.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <h3>${place.place_name}</h3>
-                    <span class="text-[10px] bg-pink-100 text-pink-600 px-2 py-1 rounded-full font-bold">PICK</span>
-                </div>
-                <p class="text-xs text-gray-500 font-medium">${place.road_address_name || place.address_name}</p>
-                <div class="mt-4 flex gap-2 overflow-hidden">
-                    <span class="text-[9px] border border-pink-300 text-pink-400 px-2 py-0.5 rounded-md font-bold whitespace-nowrap">#GOURMET</span>
-                    <span class="text-[9px] border border-pink-300 text-pink-400 px-2 py-0.5 rounded-md font-bold whitespace-nowrap">#QUEEN_APPROVED</span>
-                </div>
+                <h3>${place.place_name}</h3>
+                <p class="text-xs text-gray-500">${place.road_address_name || place.address_name}</p>
+                <div class="mt-2"><span class="text-[10px] bg-white text-pink-500 border border-pink-500 px-2 py-0.5 rounded-full font-bold">#PICK</span></div>
             `;
-            
+
             li.onclick = () => {
                 map.panTo(marker.getPosition());
                 openInfoWindow(marker, place.place_name);
@@ -364,32 +328,14 @@
 
         function openInfoWindow(marker, title) {
             const content = `<div class="custom-iw">${title}</div>`;
-            infoWindow.setContent(content);
-            infoWindow.open(map, marker);
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
         }
 
         function clearMarkers() {
             markers.forEach(m => m.setMap(null));
             markers = [];
         }
-
-        function showMsg(text) {
-            const box = document.getElementById('msg-box');
-            box.innerText = text;
-            box.classList.remove('hidden');
-            box.style.animation = 'fadeInDown 0.5s ease-out';
-            
-            setTimeout(() => {
-                box.classList.add('hidden');
-            }, 3000);
-        }
     </script>
-
-    <style>
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-    </style>
 </body>
 </html>
