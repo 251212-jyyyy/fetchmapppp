@@ -290,19 +290,34 @@
         let userLatitude = 37.5446; 
         let userLongitude = 127.0561;
 
-        // 고정 등록 데이터셋
-        const customEcoShops = [
-            { id: "c1", place_name: "지구샵 연남점", phone: "070-7721-1555", address_name: "서울 마포구 성미산로 155", place_url: "https://map.kakao.com/?q=지구샵%20연남점", x: "126.920556", y: "37.564532", desc: "수-일 11:00-21:00 (월화 휴무)" },
-            { id: "c2", place_name: "더피커 (the picker)", phone: "070-4112-1130", address_name: "서울 성동구 왕십리로 115", place_url: "https://map.kakao.com/?q=더피커", x: "127.043542", y: "37.547348", desc: "국내 최초의 제로웨이스트 가치 플랫폼" },
-            { id: "c3", place_name: "디어얼스 (Dear Earth)", phone: "0507-1351-4022", address_name: "서울 서대문구 수색로 43", place_url: "https://map.kakao.com/?q=디어얼스", x: "126.911674", y: "37.570776", desc: "지속가능한 일상을 돕는 제로웨이스트 메이커" },
-            { id: "c4", place_name: "송포어스 (SongforEarth)", phone: "070-8095-3507", address_name: "서울 강동구 풍성로35길 34", place_url: "https://map.kakao.com/?q=송포어스", x: "127.127814", y: "37.534241", desc: "동네를 밝히는 다정한 에코 라이프스타일 샵" },
-            { id: "c5", place_name: "알맹상점 껍데기점", phone: "070-7776-1825", address_name: "서울 마포구 월드컵로49 2층", place_url: "https://map.kakao.com/?q=알맹상점", x: "126.909564", y: "37.553755", desc: "알맹이만 가와라! 유명한 1세대 제로웨이스트샵" },
-            { id: "c6", place_name: "알맹상점 리스테이션", phone: "0507-1397-1825", address_name: "서울 중구 한강대로 405 서울역 4층", place_url: "https://map.kakao.com/?q=알맹상점%20리스테이션", x: "126.971019", y: "37.554668", desc: "서울역 옥상정원과 연결된 자원회수 거점 공간" },
-            { id: "c7", place_name: "지구자판기", phone: "0507-1349-2155", address_name: "서울 마포구 성미산로29길 30", place_url: "https://map.kakao.com/?q=지구자판기", x: "126.924881", y: "37.566120", desc: "플라스틱 프리 라이프를 제안하는 귀여운 가게" },
-            { id: "c8", place_name: "순순한상점", phone: "0507-1428-5601", address_name: "경기 부천시 소사구 경인로 222", place_url: "https://map.kakao.com/?q=순순한상점", x: "126.790112", y: "37.485121", desc: "자연에 순하고 사람에게 순한 무포장 리필샵" }
+        // 🗺️ 전국 각지에 흩어져 있는 제로웨이스트샵 & 빈티지샵 통합 DB 데이터셋
+        const totalNationalShops = [
+            // === [🛒 제로웨이스트/리필샵 카테고리] ===
+            { type: "제로웨이스트", id: "n1", place_name: "지구샵 연남점", phone: "070-7721-1555", address_name: "서울 마포구 성미산로 155", place_url: "https://map.kakao.com/?q=지구샵%20연남점", x: "126.920556", y: "37.564532", desc: "수-일 11:00-21:00 (월화 휴무)" },
+            { type: "제로웨이스트", id: "n2", place_name: "더피커 (the picker)", phone: "070-4112-1130", address_name: "서울 성동구 왕십리로 115", place_url: "https://map.kakao.com/?q=더피커", x: "127.043542", y: "37.547348", desc: "국내 최초의 제로웨이스트 가치 플랫폼" },
+            { type: "제로웨이스트", id: "n3", place_name: "디어얼스 (Dear Earth)", phone: "0507-1351-4022", address_name: "서울 서대문구 수색로 43", place_url: "https://map.kakao.com/?q=디어얼스", x: "126.911674", y: "37.570776", desc: "지속가능한 일상을 돕는 제로웨이스트 메이커" },
+            { type: "제로웨이스트", id: "n4", place_name: "송포어스 (SongforEarth)", phone: "070-8095-3507", address_name: "서울 강동구 풍성로35길 34", place_url: "https://map.kakao.com/?q=송포어스", x: "127.127814", y: "37.534241", desc: "동네를 밝히는 다정한 에코 라이프스타일 샵" },
+            { type: "제로웨이스트", id: "n5", place_name: "알맹상점 껍데기점", phone: "070-7776-1825", address_name: "서울 마포구 월드컵로49 2층", place_url: "https://map.kakao.com/?q=알맹상점", x: "126.909564", y: "37.553755", desc: "알맹이만 가져와라! 유명한 1세대 제로웨이스트샵" },
+            { type: "제로웨이스트", id: "n6", place_name: "지구자판기", phone: "0507-1349-2155", address_name: "서울 마포구 성미산로29길 30", place_url: "https://map.kakao.com/?q=지구자판기", x: "126.924881", y: "37.566120", desc: "플라스틱 프리 라이프를 제안하는 망원동 가게" },
+            { type: "제로웨이스트", id: "n7", place_name: "순순한상점 [부천]", phone: "0507-1428-5601", address_name: "경기 부천시 소사구 경인로 222", place_url: "https://map.kakao.com/?q=순순한상점", x: "126.790112", y: "37.485121", desc: "자연에 순하고 사람에게 순한 경기 무포장 리필샵" },
+            { type: "제로웨이스트", id: "n8", place_name: "지구별수퍼마켓 [대전]", phone: "0507-1358-8547", address_name: "대전 중구 보문로230번길 58", place_url: "https://map.kakao.com/?q=지구별수퍼마켓", x: "127.423985", y: "36.326842", desc: "대전 원도심 속 가치소비 에코 라이프 상점" },
+            { type: "제로웨이스트", id: "n9", place_name: "더커먼 (the common) [대구]", phone: "053-241-0111", address_name: "대구 중구 국채보상로 741", place_url: "https://map.kakao.com/?q=대구%20더커먼", x: "128.607412", y: "35.869854", desc: "대구의 비건 카페 겸 친환경 제로웨이스트 리필 스토어" },
+            { type: "제로웨이스트", id: "n10", place_name: "부지런 (BUJIRUN) [부산]", phone: "0507-1357-1111", address_name: "부산 금정구 장전로 48", place_url: "https://map.kakao.com/?q=부산%20부지런", x: "129.084122", y: "35.229141", desc: "지구를 위해 부지런해지는 부산 금정구 제로샵" },
+            { type: "제로웨이스트", id: "n11", place_name: "지구별가게 [제주]", phone: "064-796-7990", address_name: "제주 제주시 연북로 142", place_url: "https://map.kakao.com/?q=제주%20지구별가게", x: "126.505141", y: "33.481242", desc: "소목포장, 면생리대 등 제주의 푸른 바다를 지키는 상점" },
+            { type: "제로웨이스트", id: "n12", place_name: "카페라라&제로웨이스트 [광주]", phone: "062-959-1112", address_name: "광주 광산구 신가로 46", place_url: "https://map.kakao.com/?q=광주%20카페라라", x: "126.827415", y: "35.184125", desc: "광주 신가동의 아늑한 친환경 제로웨이스트 거점" },
+
+            // === [🧸 개념소비 빈티지숍 카테고리] ===
+            { type: "빈티지숍", id: "v1", place_name: "밀리언아카이브 [서울]", phone: "02-123-4567", address_name: "서울 성동구 아차산로5길 24-22", place_url: "https://map.kakao.com/?q=밀리언아카이브", x: "127.056985", y: "37.544122", desc: "성수동에서 가장 핫하고 거대한 빈티지 아카이브 공간" },
+            { type: "빈티지숍", id: "v2", place_name: "옴니피플 아웃도어 [서울]", phone: "070-1111-2222", address_name: "서울 마포구 서강로9길 56", place_url: "https://map.kakao.com/?q=옴니피플%20아웃도어", x: "126.931245", y: "37.552142", desc: "홍대/신촌 감성의 정통 미국식 빈티지 및 아웃도어 전문점" },
+            { type: "빈티지숍", id: "v3", place_name: "빈티지프레임 [수원/경기]", phone: "031-234-5678", address_name: "경기 수원시 팔달구 신풍로23번길 52", place_url: "https://map.kakao.com/?q=행궁동%20빈티지프레임", x: "127.014251", y: "37.283142", desc: "수원 행궁동 카페거리의 아기자기하고 유니크한 빈티지 편집숍" },
+            { type: "빈티지숍", id: "v4", place_name: "올소빈티지 [인천]", phone: "032-999-8888", address_name: "인천 부평구 부평대로38번길 15", place_url: "https://map.kakao.com/?q=올소빈티지", x: "126.723145", y: "37.498522", desc: "인천 평리단길의 감각적인 세컨핸드 감성 옷가게" },
+            { type: "빈티지숍", id: "v5", place_name: "세컨드무브 [대전]", phone: "042-555-4444", address_name: "대전 서구 둔산로31번길 66", place_url: "https://map.kakao.com/?q=둔산동%20세컨드무브", x: "127.378954", y: "36.351241", desc: "대전 둔산동의 퀄리티 높은 유니크 의류 셀렉숍" },
+            { type: "빈티지숍", id: "v6", place_name: "보물창고 빈티지 [대구]", phone: "053-777-6666", address_name: "대구 중구 동성로3길 20", place_url: "https://map.kakao.com/?q=동성로%20보물창고", x: "128.595624", y: "35.867122", desc: "대구 동성로 골목의 보물찾기 같은 빈티지 구제샵" },
+            { type: "빈티지숍", id: "v7", place_name: "보노비스타 [부산]", phone: "051-888-7777", address_name: "부산 부산진구 전포대로210번길 24", place_url: "https://map.kakao.com/?q=전포동%20보노비스타", x: "129.064125", y: "35.157845", desc: "부산 전포 카페거리의 오래된 매력, 감성 가득 빈티지웨어" },
+            { type: "빈티지숍", id: "v8", place_name: "에브리바디빈티지 [제주]", phone: "064-111-3333", address_name: "제주 제주시 관덕로8길 7", place_url: "https://map.kakao.com/?q=에브리바디빈티지", x: "126.523142", y: "33.511245", desc: "제주 원도심의 유서 깊은 건물에 위치한 스트릿 빈티지 명소" }
         ];
 
-        // 1. 초기 위치 권한 확인 후 지도 구동
+        // 1. 초기 브라우저 위치 기반 중심 세팅 및 지도 구동
         kakao.maps.load(function () {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
@@ -318,19 +333,19 @@
             }
         });
 
-        // 2. 지도 및 검색 인프라 가동
+        // 2. 지도 초기 설정
         function initMap() {
             const mapContainer = document.getElementById('map');
             const mapOptions = {
-                center: new kakao.maps.LatLng(userLatitude, userLongitude), // 내 위치 중심
-                level: 8 // 전국 매장들이 시원하게 잘 보이도록 지도 배율을 좀 더 광역(Level 8)으로 설정!
+                center: new kakao.maps.LatLng(userLatitude, userLongitude), // 접속한 내 위치 중심 시작
+                level: 10 // ★ 전국의 매장 마커들이 처음에 동시에 쫙 펼쳐지도록 축척 레벨을 10으로 확대 조절! ★
             };
 
             map = new kakao.maps.Map(mapContainer, mapOptions);
             placeService = new kakao.maps.services.Places(); 
 
-            showUserLocationPin(); // 내 실제 서 있는 곳 파란 점 표시
-            fetchEcoPlaces(); // 전국구 탐색 작동
+            showUserLocationPin(); // 내 위치 파란 점 찍기
+            fetchEcoPlaces(); // ★ 첫 시작할 때 성수동만 보지 않고 전국 고정 매장 싹 다 표출 ★
         }
 
         // 3. 내 현재 위치 파란 점 표시
@@ -347,7 +362,7 @@
             });
         }
 
-        // 4. 탭 이동 스위칭 함수
+        // 4. 탭 이동 스위칭 기능
         function changeTab(tabType) {
             const tabRefill = document.getElementById('tabRefill');
             const tabVintage = document.getElementById('tabVintage');
@@ -363,70 +378,57 @@
             }
 
             document.getElementById('keywordInput').value = ""; 
-            fetchEcoPlaces(); 
+            fetchEcoPlaces(); // 탭 이동 시 해당 탭에 해당하는 전국구 매장 리스트로 교체
         }
 
-        // 5. 검색창 기능
+        // 5. 검색창 기능 (이름이나 지역명 검색)
         function searchShopByName() {
             const searchInputText = document.getElementById('keywordInput').value.trim();
             if (!searchInputText) {
-                alert("찾고 싶은 가게의 이름을 적어줘! 예) 알맹상점");
+                alert("찾고 싶은 가게 이름이나 지역을 적어줘! 예) 지구샵 또는 부산");
                 return;
             }
-            fetchEcoPlaces(searchInputText + " " + currentKeyword, true);
+            fetchEcoPlaces(searchInputText, true);
         }
 
-        // 6. 데이터 소싱 코어 (★반경 2km 제한 완전히 해제해서 전국 스캔★)
-        function fetchEcoPlaces(customQuery, isSearchMode = false) {
+        // 6. 데이터 필터링 및 표출 코어 (카카오 API 한계를 깨고 고정 DB 기반 전국 와이드 실현)
+        function fetchEcoPlaces(queryText = "", isSearchMode = false) {
             clearOldMarkers();
             if (currentOverlay) currentOverlay.setMap(null);
 
-            const finalQuery = customQuery || currentKeyword;
-            let combinedData = [];
+            let filteredList = [];
 
-            if (currentKeyword === "제로웨이스트") {
-                const pureSearchText = customQuery ? customQuery.replace(" 제로웨이스트", "").trim() : "";
-                const filteredCustom = customEcoShops.filter(shop => 
-                    shop.place_name.includes(pureSearchText) || shop.address_name.includes(pureSearchText)
+            if (!isSearchMode) {
+                // [기본 상태] 현재 활성화된 탭(제로웨이스트 또는 빈티지숍)에 속한 전국의 모든 상점을 선별
+                filteredList = totalNationalShops.filter(shop => shop.type === currentKeyword);
+            } else {
+                // [검색 모드] 현재 활성화된 탭 내부에서 유저가 입력한 텍스트(상점명 혹은 지역명)가 포함된 대상을 전국 스캔
+                filteredList = totalNationalShops.filter(shop => 
+                    shop.type === currentKeyword && 
+                    (shop.place_name.includes(queryText) || shop.address_name.includes(queryText))
                 );
-                combinedData = [...filteredCustom];
             }
 
-            // 카카오 지도 검색 조건 옵션 (★radius 항목을 지워서 전국 단위 와이드 탐색 작동★)
-            const searchOptions = {
-                location: new kakao.maps.LatLng(userLatitude, userLongitude),
-                sort: kakao.maps.services.SortBy.DISTANCE
-            };
+            const listContainer = document.getElementById('placesList');
 
-            placeService.keywordSearch(finalQuery, function(data, status, pagination) {
-                if (status === kakao.maps.services.Status.OK) {
-                    combinedData = [...combinedData, ...data];
-                }
-
-                // 중복 데이터 병합 필터링
-                const uniqueData = combinedData.filter((item, index, self) =>
-                    index === self.findIndex((t) => t.place_name === item.place_name)
-                );
-
-                const listContainer = document.getElementById('placesList');
+            if (filteredList.length > 0) {
+                renderListAndMarkers(filteredList);
                 
-                if (uniqueData.length > 0) {
-                    renderListAndMarkers(uniqueData);
-                    
-                    // 직접 검색했을 경우 검색된 1순위 매장 방향으로 화면을 즉시 이동
-                    if (isSearchMode && data.length > 0) {
-                        const firstMovePos = new kakao.maps.LatLng(data[0].y, data[0].x);
-                        map.setCenter(firstMovePos);
-                    }
-                } else {
-                    alert("원하는 매장을 찾지 못했어 😢 대신 전국의 알찬 리스트로 다시 화면을 채워줄게!");
-                    document.getElementById('keywordInput').value = ""; 
-                    fetchEcoPlaces(); 
+                // 유저가 검색창을 통해 특정 매장을 정확히 조준 검색한 거라면 해당 상점 위치로 지도를 이동
+                if (isSearchMode) {
+                    const targetPos = new kakao.maps.LatLng(filteredList[0].y, filteredList[0].x);
+                    map.setCenter(targetPos);
+                    map.setLevel(5); // 타겟 매장을 자세히 볼 수 있게 줌인
                 }
-            }, searchOptions);
+            } else {
+                // 검색 결과가 아예 없는 경우 리셋 알림 후 첫 화면 복귀
+                alert("원하는 조건의 친환경 매장을 찾지 못했어 😢 대신 전국의 알찬 리스트 화면으로 돌아갈게!");
+                document.getElementById('keywordInput').value = ""; 
+                fetchEcoPlaces(); 
+            }
         }
 
-        // 7. 귀여운 원형 이모지 커스텀 마커 제작 및 렌더링
+        // 7. 귀여운 원형 이모지 커스텀 마커 제작 및 전국 지도에 동시 렌더링
         function renderListAndMarkers(shopList) {
             const listContainer = document.getElementById('placesList');
             listContainer.innerHTML = ''; 
@@ -438,7 +440,7 @@
             shopList.forEach((shop) => {
                 const shopPosition = new kakao.maps.LatLng(shop.y, shop.x);
 
-                // 이미지 대신 동글동글 원형 🛒 / 🧸 커스텀 이모지 레이어 생성
+                // 동글동글 원형 🛒 / 🧸 커스텀 이모지 레이어 생성
                 const markerContent = document.createElement('div');
                 markerContent.className = 'cute-marker';
                 markerContent.style.borderColor = borderThemeColor;
@@ -454,7 +456,7 @@
                 cuteOverlayMarker.setMap(map);
                 currentMarkers.push(cuteOverlayMarker); 
 
-                // 왼쪽 리스트 바인딩
+                // 왼쪽 리스트 영역 카드 제작
                 const itemElement = document.createElement('div');
                 itemElement.className = 'place-item';
                 let descHtml = shop.desc ? `<div class="place-desc">💡 ${shop.desc}</div>` : '';
@@ -465,6 +467,7 @@
                     <div class="place-phone">📞 ${shop.phone || '전화번호 미등록'}</div>
                 `;
 
+                // 마커 클릭 & 사이드바 카드 클릭 이벤트 동시 연결
                 const selectEventAction = function () {
                     map.panTo(shopPosition);
                     openArrowOverlay(shop, shopPosition);
@@ -477,7 +480,7 @@
             });
         }
 
-        // 8. 말풍선 피어오르기 기능
+        // 8. 마커 선택 시 꼬리 달린 예쁜 말풍선 피어오르기
         function openArrowOverlay(shop, position) {
             if (currentOverlay) {
                 currentOverlay.setMap(null);
@@ -506,7 +509,7 @@
             currentOverlay.setMap(map);
         }
 
-        // 9. 마커 지우기
+        // 9. 마커 지우기 (초기화)
         function clearOldMarkers() {
             currentMarkers.forEach(marker => marker.setMap(null));
             currentMarkers = [];
