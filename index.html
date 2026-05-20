@@ -29,7 +29,7 @@
             height: 100%;
         }
 
-        /* 왼쪽 사이드바 디자인 (자연을 닮은 연초록과 베이지 톤) */
+        /* 왼쪽 사이드바 디자인 */
         .sidebar {
             width: 360px;
             height: 100%;
@@ -101,7 +101,6 @@
             transition: all 0.3s ease;
             font-size: 0.88rem;
         }
-        /* 활성화된 탭 스타일 */
         .tab-button.active.tab-refill {
             color: #ffffff;
             background: #4caf50; 
@@ -165,7 +164,7 @@
             height: 100%;
         }
 
-        /* 🔴 [NEW] 동글동글 귀여운 커스텀 이모지 마커 스타일 */
+        /* 귀여운 원형 이모지 마커 스타일 */
         .cute-marker {
             width: 38px;
             height: 38px;
@@ -184,7 +183,7 @@
             transform: scale(1.15);
         }
 
-        /* 귀여운 화살표 꼬리가 달린 커스텀 말풍선(오버레이) */
+        /* 커스텀 말풍선(오버레이) */
         .custom-bubble {
             background: #ffffff;
             border: 2px solid #4caf50;
@@ -291,7 +290,7 @@
         let userLatitude = 37.5446; 
         let userLongitude = 127.0561;
 
-        // 🛒 다양하게 듬뿍 보강된 커스텀 제로웨이스트샵 고정 데이터셋
+        // 고정 등록 데이터셋
         const customEcoShops = [
             { id: "c1", place_name: "지구샵 연남점", phone: "070-7721-1555", address_name: "서울 마포구 성미산로 155", place_url: "https://map.kakao.com/?q=지구샵%20연남점", x: "126.920556", y: "37.564532", desc: "수-일 11:00-21:00 (월화 휴무)" },
             { id: "c2", place_name: "더피커 (the picker)", phone: "070-4112-1130", address_name: "서울 성동구 왕십리로 115", place_url: "https://map.kakao.com/?q=더피커", x: "127.043542", y: "37.547348", desc: "국내 최초의 제로웨이스트 가치 플랫폼" },
@@ -303,16 +302,15 @@
             { id: "c8", place_name: "순순한상점", phone: "0507-1428-5601", address_name: "경기 부천시 소사구 경인로 222", place_url: "https://map.kakao.com/?q=순순한상점", x: "126.790112", y: "37.485121", desc: "자연에 순하고 사람에게 순한 무포장 리필샵" }
         ];
 
-        // 1. 초기 실행 관문: 사용자의 브라우저 위치 권한을 승인받아 완벽 가동
+        // 1. 초기 위치 권한 확인 후 지도 구동
         kakao.maps.load(function () {
             if (navigator.geolocation) {
-                // 사용자의 실제 현위치 조회를 최우선 시도
                 navigator.geolocation.getCurrentPosition(function (position) {
                     userLatitude = position.coords.latitude;
                     userLongitude = position.coords.longitude;
                     initMap(); 
                 }, function (error) {
-                    console.log("위치 권한 거부 또는 오류로 기본 좌표(성수동)를 사용합니다.");
+                    console.log("위치 권한 거부 등으로 기본 좌표(성수동)를 사용합니다.");
                     initMap(); 
                 });
             } else {
@@ -320,22 +318,22 @@
             }
         });
 
-        // 2. 지도 초기 인프라 설정 및 구동
+        // 2. 지도 및 검색 인프라 가동
         function initMap() {
             const mapContainer = document.getElementById('map');
             const mapOptions = {
-                center: new kakao.maps.LatLng(userLatitude, userLongitude), // 내 정확한 현위치 중심 고정
-                level: 5
+                center: new kakao.maps.LatLng(userLatitude, userLongitude), // 내 위치 중심
+                level: 8 // 전국 매장들이 시원하게 잘 보이도록 지도 배율을 좀 더 광역(Level 8)으로 설정!
             };
 
             map = new kakao.maps.Map(mapContainer, mapOptions);
-            placeService = new kakao.maps.services.Places(); // 카카오 검색 서비스 로드
+            placeService = new kakao.maps.services.Places(); 
 
-            showUserLocationPin(); // 내 위치 파란 점 생성
-            fetchEcoPlaces(); // 첫 화면 전용 데이터 조회 시작
+            showUserLocationPin(); // 내 실제 서 있는 곳 파란 점 표시
+            fetchEcoPlaces(); // 전국구 탐색 작동
         }
 
-        // 3. 내 현재 위치 중심을 직관적으로 보여주는 푸른 점 마커 구현
+        // 3. 내 현재 위치 파란 점 표시
         function showUserLocationPin() {
             const userPosition = new kakao.maps.LatLng(userLatitude, userLongitude);
             const pinImageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/2012/img/marker_p.png';
@@ -349,7 +347,7 @@
             });
         }
 
-        // 4. 리필샵 <-> 빈티지샵 탭 이동 스위칭 함수
+        // 4. 탭 이동 스위칭 함수
         function changeTab(tabType) {
             const tabRefill = document.getElementById('tabRefill');
             const tabVintage = document.getElementById('tabVintage');
@@ -364,30 +362,28 @@
                 currentKeyword = "빈티지숍";
             }
 
-            document.getElementById('keywordInput').value = ""; // 검색창 리셋
-            fetchEcoPlaces(); // 기본 내 주변 리스트 리로드
+            document.getElementById('keywordInput').value = ""; 
+            fetchEcoPlaces(); 
         }
 
-        // 5. 검색창에 입력을 넣고 엔터 혹은 돋보기 아이콘을 눌렀을 때 실행되는 함수
+        // 5. 검색창 기능
         function searchShopByName() {
             const searchInputText = document.getElementById('keywordInput').value.trim();
             if (!searchInputText) {
                 alert("찾고 싶은 가게의 이름을 적어줘! 예) 알맹상점");
                 return;
             }
-            // 특정 검색어를 입력했을 때는 반경 제한(2km) 없이 확장해서 검색하도록 전달
             fetchEcoPlaces(searchInputText + " " + currentKeyword, true);
         }
 
-        // 6. 데이터 소싱 핵심 코어 (기본 내주변 2km 검색 vs 전국구 확장 키워드 검색 통합)
-        function fetchEcoPlaces(customQuery, isGlobalSearch = false) {
+        // 6. 데이터 소싱 코어 (★반경 2km 제한 완전히 해제해서 전국 스캔★)
+        function fetchEcoPlaces(customQuery, isSearchMode = false) {
             clearOldMarkers();
             if (currentOverlay) currentOverlay.setMap(null);
 
             const finalQuery = customQuery || currentKeyword;
             let combinedData = [];
 
-            // 탭이 '제로웨이스트'이고 유저가 검색어를 적었다면 고정 확장 풀에서 1차 탐색 매칭
             if (currentKeyword === "제로웨이스트") {
                 const pureSearchText = customQuery ? customQuery.replace(" 제로웨이스트", "").trim() : "";
                 const filteredCustom = customEcoShops.filter(shop => 
@@ -396,53 +392,45 @@
                 combinedData = [...filteredCustom];
             }
 
-            // 카카오 지도 API 검색 옵션 셋팅
+            // 카카오 지도 검색 조건 옵션 (★radius 항목을 지워서 전국 단위 와이드 탐색 작동★)
             const searchOptions = {
                 location: new kakao.maps.LatLng(userLatitude, userLongitude),
                 sort: kakao.maps.services.SortBy.DISTANCE
             };
-
-            // [개선형 반영] 일반 탐색 모드일 때만 2km 반경 제약을 걸고, 직접 명칭을 검색할 땐 전국구로 조회 가능하게 처리!
-            if (!isGlobalSearch) {
-                searchOptions.radius = 2000;
-            }
 
             placeService.keywordSearch(finalQuery, function(data, status, pagination) {
                 if (status === kakao.maps.services.Status.OK) {
                     combinedData = [...combinedData, ...data];
                 }
 
-                // 중복 데이터 제거 (동일한 상점이 고정값과 API에 동시 존재할 수 있으므로 이름 기준 필터링)
+                // 중복 데이터 병합 필터링
                 const uniqueData = combinedData.filter((item, index, self) =>
                     index === self.findIndex((t) => t.place_name === item.place_name)
                 );
 
                 const listContainer = document.getElementById('placesList');
                 
-                // 검색 결과 유무 판단 처리
                 if (uniqueData.length > 0) {
                     renderListAndMarkers(uniqueData);
                     
-                    // 만약 명칭 검색을 통해 멀리 있는 결과를 찾은 경우라면 첫 번째 검색 장소로 부드럽게 지도 앵글 이동
-                    if (isGlobalSearch && data.length > 0) {
+                    // 직접 검색했을 경우 검색된 1순위 매장 방향으로 화면을 즉시 이동
+                    if (isSearchMode && data.length > 0) {
                         const firstMovePos = new kakao.maps.LatLng(data[0].y, data[0].x);
                         map.setCenter(firstMovePos);
                     }
                 } else {
-                    // 🔴 [NEW] 아예 일치하는 매장명이 없을 때 경고창 후 첫화면 자동 리셋 복귀 로직
-                    alert("원하는 매장을 찾지 못했어 😢 대신 내 주변의 알찬 리스트로 다시 채워줄게!");
-                    document.getElementById('keywordInput').value = ""; // 검색어 칸 제거
-                    fetchEcoPlaces(); // 기본 첫 화면 모드로 원상복귀 리로드
+                    alert("원하는 매장을 찾지 못했어 😢 대신 전국의 알찬 리스트로 다시 화면을 채워줄게!");
+                    document.getElementById('keywordInput').value = ""; 
+                    fetchEcoPlaces(); 
                 }
             }, searchOptions);
         }
 
-        // 7. 🔴 [NEW] 귀엽고 동글동글한 원형 이모지 커스텀 마커 제작 및 화면 매핑 함수
+        // 7. 귀여운 원형 이모지 커스텀 마커 제작 및 렌더링
         function renderListAndMarkers(shopList) {
             const listContainer = document.getElementById('placesList');
             listContainer.innerHTML = ''; 
 
-            // 현재 카테고리 탭 종류에 부합하는 아이콘 이모지와 컬러 정의
             const isRefill = (currentKeyword === '제로웨이스트');
             const emojiIcon = isRefill ? '🛒' : '🧸';
             const borderThemeColor = isRefill ? '#4caf50' : '#ff9800';
@@ -450,7 +438,7 @@
             shopList.forEach((shop) => {
                 const shopPosition = new kakao.maps.LatLng(shop.y, shop.x);
 
-                // 이미지 마커 대신 귀여운 HTML 요소를 매핑할 수 있는 CustomOverlay로 동글동글 이모지 마커 제작
+                // 이미지 대신 동글동글 원형 🛒 / 🧸 커스텀 이모지 레이어 생성
                 const markerContent = document.createElement('div');
                 markerContent.className = 'cute-marker';
                 markerContent.style.borderColor = borderThemeColor;
@@ -464,9 +452,9 @@
                 });
 
                 cuteOverlayMarker.setMap(map);
-                currentMarkers.push(cuteOverlayMarker); // 초기화를 위한 전역 추적 배열에 저장
+                currentMarkers.push(cuteOverlayMarker); 
 
-                // 리스트 영역 카드 디자인 엘리먼트 동적 렌더링
+                // 왼쪽 리스트 바인딩
                 const itemElement = document.createElement('div');
                 itemElement.className = 'place-item';
                 let descHtml = shop.desc ? `<div class="place-desc">💡 ${shop.desc}</div>` : '';
@@ -477,7 +465,6 @@
                     <div class="place-phone">📞 ${shop.phone || '전화번호 미등록'}</div>
                 `;
 
-                // 마커 카드 및 마커 본체 클릭 이벤트 연결
                 const selectEventAction = function () {
                     map.panTo(shopPosition);
                     openArrowOverlay(shop, shopPosition);
@@ -490,7 +477,7 @@
             });
         }
 
-        // 8. 장소를 선택했을 때 마커 머리 위에 피어나는 귀여운 말풍선 오버레이 제어 함수
+        // 8. 말풍선 피어오르기 기능
         function openArrowOverlay(shop, position) {
             if (currentOverlay) {
                 currentOverlay.setMap(null);
@@ -519,7 +506,7 @@
             currentOverlay.setMap(map);
         }
 
-        // 9. 새로운 탭 전환이나 재검색 시 기존의 흔적을 깨끗하게 비워주는 정리 함수
+        // 9. 마커 지우기
         function clearOldMarkers() {
             currentMarkers.forEach(marker => marker.setMap(null));
             currentMarkers = [];
